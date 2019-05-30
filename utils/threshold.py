@@ -2,7 +2,7 @@ import math
 
 
 # 求SureShrink法阈值
-def SureShrink(var, coeffs):
+def sure_shrink(var, coeffs):
     N = len(coeffs)
     sqr_coeffs = []
     for coeff in coeffs:
@@ -20,14 +20,14 @@ def SureShrink(var, coeffs):
 
 
 # 求VisuShrink法阈值
-def VisuShrink(var, coeffs):
+def visu_shrink(var, coeffs):
     N = len(coeffs)
     thre = math.sqrt(var) * math.sqrt(2 * math.log(N))
     return thre
 
 
 # 求HeurSure法阈值
-def HeurSure(var, coeffs):
+def heur_sure(var, coeffs):
     N = len(coeffs)
     s = 0
     for coeff in coeffs:
@@ -35,13 +35,13 @@ def HeurSure(var, coeffs):
     theta = (s - N) / N
     miu = math.pow(math.log2(N), 3/2) / math.pow(N, 1/2)
     if theta < miu:
-        return VisuShrink(var, coeffs)
+        return visu_shrink(var, coeffs)
     else:
-        min(VisuShrink(var, coeffs), SureShrink(var, coeffs))
+        return min(visu_shrink(var, coeffs), sure_shrink(var, coeffs))
 
 
-# 求Minmax法阈值
-def Minmax(var, coeffs):
+# 求Minimax法阈值
+def mini_max(var, coeffs):
     N = len(coeffs)
     if N > 32:
         return math.sqrt(var) * (0.3936 + 0.1829 * math.log2(N))

@@ -2,7 +2,7 @@ import pywt
 import math
 import numpy as np
 import matplotlib.pylab as plt
-from .get_threshold import SureShrink, HeurSure, VisuShrink, Minmax
+from .threshold import sure_shrink, heur_sure, visu_shrink, mini_max
 from .ops import right_shift, back_shift, get_var
 
 
@@ -38,7 +38,7 @@ def thresholding(data, method='sureshrink', mode='soft', wavelets_name='sym8', l
     :param level: deconstruct level, 5 as default
     :return: processed data
     '''
-    methods_dict = {'visushrink': VisuShrink, 'sureshrink': SureShrink, 'heursure': HeurSure, 'minmax': Minmax}
+    methods_dict = {'visushrink': visu_shrink, 'sureshrink': sure_shrink, 'heursure': heur_sure, 'minmax': mini_max}
     # 创建小波对象
     wave = pywt.Wavelet(wavelets_name)
 
@@ -65,7 +65,7 @@ def thresholding(data, method='sureshrink', mode='soft', wavelets_name='sym8', l
 
 
 # 小波平移不变消噪
-def TI(data, step=100, method='heursure', mode='soft', wavelets_name='sym5', level=5):
+def ti(data, step=100, method='heursure', mode='soft', wavelets_name='sym5', level=5):
     '''
 
     :param data: signal
