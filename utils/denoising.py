@@ -2,6 +2,8 @@ import pywt
 import math
 import numpy as np
 import matplotlib.pylab as plt
+from .get_threshold import SureShrink, HeurSure, VisuShrink, Minmax
+from .ops import right_shift, back_shift, get_var
 
 
 # 获取近似基线
@@ -89,80 +91,8 @@ def TI(data, step=100, method='heursure', mode='soft', wavelets_name='sym5', lev
     return final_data
 
 
-# 平移操作
-def right_shift(data, n):
-    copy1 = list(data[n:])
-    copy2 = list(data[:n])
-    return copy1 + copy2
 
 
-# 逆平移操作
-def back_shift(data, n):
-    p = len(data) - n
-    copy1 = list(data[p:])
-    copy2 = list(data[:p])
-    return copy1 + copy2
 
 
-# 获取噪声方差
-def get_var(cD):
-    coeffs = cD
-    abs_coeffs = []
-    for coeff in coeffs:
-        abs_coeffs.append(math.fabs(coeff))
-    abs_coeffs.sort()
-    pos = math.ceil(len(abs_coeffs) / 2)
-    var = abs_coeffs[pos] / 0.6745
-    return var
 
-
-# 求SureShrink法阈值
-def SureShrink(var, coeffs):
-    N = len(coeffs)
-    sqr_coeffs = []
-    for coeff in coeffs:
-        sqr_coeffs.append(math.pow(coeff, 2))
-    sqr_coeffs.sort()
-    pos = 0
-    r = 0
-    for idx, sqr_coeff in enumerate(sqr_coeffs):
-        new_r = (N - 2 * (idx + 1) + (N - (idx + 1))*sqr_coeff + sum(sqr_coeffs[0:idx+1])) / N
-        if r == 0 or r > new_r:
-            r = new_r
-            pos = idx
-    thre = math.sqrt(var) * math.sqrt(sqr_coeffs[pos])
-    return thre
-
-
-# 求VisuShrink法阈值
-def VisuShrink(var, coeffs):
-    N = len(coeffs)
-    thre = math.sqrt(var) * math.sqrt(2 * math.log(N))
-    return thre
-
-
-# 求HeurSure法阈值
-def HeurSure(var, coeffs):
-    N = len(coeffs)
-    s = 0
-    for coeff in coeffs:
-        s += math.pow(coeff, 2)
-    theta = (s - N) / N
-    miu = math.pow(math.log2(N), 3/2) / math.pow(N, 1/2)
-    if theta < miu:
-        return VisuShrink(var, coeffs)
-    else:
-        min(VisuShrink(var, coeffs), SureShrink(var, coeffs))
-
-
-# 求Minmax法阈值
-def Minmax(var, coeffs):
-    N = len(coeffs)
-    if N > 32:
-        return math.sqrt(var) * (0.3936 + 0.1829 * math.log2(N))
-    else:
-        return 0
-
-
-if __name__ == "__main__":
-    pass
