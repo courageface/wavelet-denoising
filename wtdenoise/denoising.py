@@ -28,7 +28,7 @@ def get_baseline(data, wavelets_name='sym8', level=5):
 
 
 # 阈值收缩去噪法
-def thresholding(data, method='sureshrink', mode='soft', wavelets_name='sym8', level=5):
+def tsd(data, method='sureshrink', mode='soft', wavelets_name='sym8', level=5):
     '''
 
     :param data: signal
@@ -81,7 +81,7 @@ def ti(data, step=100, method='heursure', mode='soft', wavelets_name='sym5', lev
     final_data = [0]*len(data)
     for i in range(num):
         temp_data = right_shift(data, i*step)
-        temp_data = thresholding(temp_data, method=method, mode=mode, wavelets_name=wavelets_name, level=level)
+        temp_data = tsd(temp_data, method=method, mode=mode, wavelets_name=wavelets_name, level=level)
         temp_data = temp_data.tolist()
         temp_data = back_shift(temp_data, i*step)
         final_data = list(map(lambda x, y: x+y, final_data, temp_data))
